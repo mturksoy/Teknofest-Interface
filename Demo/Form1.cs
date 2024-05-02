@@ -7,11 +7,11 @@ using System.IO.Ports;
 
 namespace Demo
 {
-    public partial class Form1 : Form
+    public partial class SATX : Form
     {
         float x = 0, y = 0, z = 0;
         bool cx = false,cy = false, cz = false;
-        public Form1()
+        public SATX()
         {
             InitializeComponent();
         }
@@ -24,6 +24,29 @@ namespace Demo
             }
             GL.ClearColor(Color.Navy);
             TimerXYZ.Interval = 1;
+
+            // Gri arka plan rengi olan panel
+            Panel panelGriArkaPlan1 = new Panel();
+            panelGriArkaPlan1.BackColor = Color.Gray;
+            panelGriArkaPlan1.Location = new Point(397, 256);
+            panelGriArkaPlan1.Size = new Size(612 - 397, 360 - 256);
+            this.Controls.Add(panelGriArkaPlan1);
+
+            // Gri arka plan rengi olan panel
+            Panel panelGriArkaPlan2 = new Panel();
+            panelGriArkaPlan2.BackColor = Color.Gray;
+            panelGriArkaPlan2.Location = new Point(24, 13);
+            panelGriArkaPlan2.Size = new Size(960 - 24, 50 - 13);
+            this.Controls.Add(panelGriArkaPlan2);
+
+            // Gri arka plan rengi olan panel
+            Panel panelGriArkaPlan3 = new Panel();
+            panelGriArkaPlan3.BackColor = Color.Gray;
+            panelGriArkaPlan3.Location = new Point(973, 140);
+            panelGriArkaPlan3.Size = new Size(1220 - 973, 695 - 100);
+            this.Controls.Add(panelGriArkaPlan3);
+
+
         }
 
         private void label7_Click(object sender, EventArgs e)
@@ -32,31 +55,7 @@ namespace Demo
         }
         private void TimerXYZ_Tick(object sender, EventArgs e)
         {
-            if (cx == true)
-            {
-                if (x < 360)
-                    x += 5;
-                else
-                    x = 0;
-                label3.Text = x.ToString();
-            }
-            if (cy == true)
-            {
-                if (y < 360)
-                    y += 5;
-                else
-                    y = 0;
-                label4.Text = y.ToString();
-            }
-            if (cz == true)
-            {
-                if (z < 360)
-                    z += 5;
-                else
-                    z = 0;
-                label5.Text = z.ToString();
-            }
-            glControl1.Invalidate();
+            
         }
 
 
@@ -73,7 +72,7 @@ namespace Demo
                     readingPort.Open();
                     //MessageBox.Show("BAĞLANTI KURULDU");
                     durdurButton.Enabled = true;
-                    baslatButton.Enabled = false;
+                    baglanButton.Enabled = false;
                 }
             }
             catch (Exception)
@@ -87,7 +86,7 @@ namespace Demo
         {
             readingPort.Close();
             timer.Stop();
-            baslatButton.Enabled = true;
+            baglanButton.Enabled = true;
             durdurButton.Enabled = false;
             MessageBox.Show("BAĞLANTI KESİLDİ");
         }
@@ -255,6 +254,11 @@ namespace Demo
             else
                 cy = false;
             TimerXYZ.Start();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+
         }
 
         private void button3_Click(object sender, EventArgs e)
