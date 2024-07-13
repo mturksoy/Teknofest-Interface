@@ -30,24 +30,24 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SATX));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea31 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend31 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series31 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea32 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend32 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series32 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea33 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend33 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series33 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea34 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend34 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series34 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea35 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend35 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series35 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea36 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend36 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series36 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea15 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend15 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea16 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend16 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea17 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend17 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea18 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend18 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.glControl1 = new OpenTK.GLControl();
             this.labelx = new System.Windows.Forms.Label();
             this.labelxx = new System.Windows.Forms.Label();
@@ -106,6 +106,16 @@
             this.label33 = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ModelInisHiziKontrol = new System.Windows.Forms.Label();
+            this.GorevInisHiziKontrol = new System.Windows.Forms.Label();
+            this.TasiyiciGpsKontrol = new System.Windows.Forms.Label();
+            this.GorevGpsKontrol = new System.Windows.Forms.Label();
+            this.AyrilmaKontrol = new System.Windows.Forms.Label();
+            this.ModelInisHiziKontrolRenk = new System.Windows.Forms.Label();
+            this.GorevInisHiziKontrolRenk = new System.Windows.Forms.Label();
+            this.TasiyiciGpsKontrolRenk = new System.Windows.Forms.Label();
+            this.GorevGpsKontrolRenk = new System.Windows.Forms.Label();
+            this.AyrilmaKontrolRenk = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
@@ -308,19 +318,19 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(63, 15);
             this.label6.TabIndex = 28;
-            this.label6.Text = "  0 0 0 0 0  ";
+            this.label6.Text = "                  ";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.BackColor = System.Drawing.Color.Lime;
+            this.label7.BackColor = System.Drawing.Color.Black;
             this.label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label7.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label7.Location = new System.Drawing.Point(511, 312);
+            this.label7.Location = new System.Drawing.Point(512, 312);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(62, 15);
+            this.label7.Size = new System.Drawing.Size(59, 15);
             this.label7.TabIndex = 29;
-            this.label7.Text = "   |   |   |   |   ";
+            this.label7.Text = "   |   |   |   |  ";
             // 
             // button1
             // 
@@ -335,114 +345,108 @@
             // 
             // chart1
             // 
-            chartArea31.Name = "ChartArea1";
-            chartArea31.Visible = false;
-            this.chart1.ChartAreas.Add(chartArea31);
-            legend31.Name = "Legend1";
-            this.chart1.Legends.Add(legend31);
+            chartArea13.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea13);
+            legend13.Name = "Legend1";
+            this.chart1.Legends.Add(legend13);
             this.chart1.Location = new System.Drawing.Point(21, 386);
             this.chart1.Name = "chart1";
-            series31.ChartArea = "ChartArea1";
-            series31.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series31.CustomProperties = "IsXAxisQuantitative=False";
-            series31.Legend = "Legend1";
-            series31.Name = "İniş Hızı";
-            this.chart1.Series.Add(series31);
+            series13.ChartArea = "ChartArea1";
+            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series13.CustomProperties = "IsXAxisQuantitative=False";
+            series13.Legend = "Legend1";
+            series13.Name = "İniş Hızı";
+            this.chart1.Series.Add(series13);
             this.chart1.Size = new System.Drawing.Size(300, 166);
             this.chart1.TabIndex = 31;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea32.Name = "ChartArea1";
-            chartArea32.Visible = false;
-            this.chart2.ChartAreas.Add(chartArea32);
-            legend32.Name = "Legend1";
-            this.chart2.Legends.Add(legend32);
+            chartArea14.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea14);
+            legend14.Name = "Legend1";
+            this.chart2.Legends.Add(legend14);
             this.chart2.Location = new System.Drawing.Point(343, 386);
             this.chart2.Name = "chart2";
-            series32.ChartArea = "ChartArea1";
-            series32.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series32.CustomProperties = "IsXAxisQuantitative=False";
-            series32.Legend = "Legend1";
-            series32.Name = "Pil Gerilimi";
-            this.chart2.Series.Add(series32);
+            series14.ChartArea = "ChartArea1";
+            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series14.CustomProperties = "IsXAxisQuantitative=False";
+            series14.Legend = "Legend1";
+            series14.Name = "Pil Gerilimi";
+            this.chart2.Series.Add(series14);
             this.chart2.Size = new System.Drawing.Size(300, 166);
             this.chart2.TabIndex = 32;
             this.chart2.Text = "chart2";
             // 
             // chart3
             // 
-            chartArea33.Name = "ChartArea1";
-            chartArea33.Visible = false;
-            this.chart3.ChartAreas.Add(chartArea33);
-            legend33.Name = "Legend1";
-            this.chart3.Legends.Add(legend33);
+            chartArea15.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea15);
+            legend15.Name = "Legend1";
+            this.chart3.Legends.Add(legend15);
             this.chart3.Location = new System.Drawing.Point(662, 570);
             this.chart3.Name = "chart3";
-            series33.ChartArea = "ChartArea1";
-            series33.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series33.CustomProperties = "IsXAxisQuantitative=False";
-            series33.Legend = "Legend1";
-            series33.Name = "Basınç";
-            this.chart3.Series.Add(series33);
+            series15.ChartArea = "ChartArea1";
+            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series15.CustomProperties = "IsXAxisQuantitative=False";
+            series15.Legend = "Legend1";
+            series15.Name = "Basınç";
+            this.chart3.Series.Add(series15);
             this.chart3.Size = new System.Drawing.Size(300, 166);
             this.chart3.TabIndex = 33;
             this.chart3.Text = "chart3";
             // 
             // chart4
             // 
-            chartArea34.Name = "ChartArea1";
-            chartArea34.Visible = false;
-            this.chart4.ChartAreas.Add(chartArea34);
-            legend34.Name = "Legend1";
-            this.chart4.Legends.Add(legend34);
+            chartArea16.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea16);
+            legend16.Name = "Legend1";
+            this.chart4.Legends.Add(legend16);
             this.chart4.Location = new System.Drawing.Point(662, 386);
             this.chart4.Name = "chart4";
-            series34.ChartArea = "ChartArea1";
-            series34.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series34.CustomProperties = "IsXAxisQuantitative=False";
-            series34.Legend = "Legend1";
-            series34.Name = "Sıcaklık";
-            this.chart4.Series.Add(series34);
+            series16.ChartArea = "ChartArea1";
+            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series16.CustomProperties = "IsXAxisQuantitative=False";
+            series16.Legend = "Legend1";
+            series16.Name = "Sıcaklık";
+            this.chart4.Series.Add(series16);
             this.chart4.Size = new System.Drawing.Size(300, 166);
             this.chart4.TabIndex = 34;
             this.chart4.Text = "chart4";
             // 
             // chart5
             // 
-            chartArea35.Name = "ChartArea1";
-            chartArea35.Visible = false;
-            this.chart5.ChartAreas.Add(chartArea35);
-            legend35.Name = "Legend1";
-            this.chart5.Legends.Add(legend35);
+            chartArea17.Name = "ChartArea1";
+            this.chart5.ChartAreas.Add(chartArea17);
+            legend17.Name = "Legend1";
+            this.chart5.Legends.Add(legend17);
             this.chart5.Location = new System.Drawing.Point(343, 570);
             this.chart5.Name = "chart5";
-            series35.ChartArea = "ChartArea1";
-            series35.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series35.CustomProperties = "IsXAxisQuantitative=False";
-            series35.Legend = "Legend1";
-            series35.Name = "Yükseklik";
-            this.chart5.Series.Add(series35);
+            series17.ChartArea = "ChartArea1";
+            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series17.CustomProperties = "IsXAxisQuantitative=False";
+            series17.Legend = "Legend1";
+            series17.Name = "Yükseklik";
+            this.chart5.Series.Add(series17);
             this.chart5.Size = new System.Drawing.Size(300, 166);
             this.chart5.TabIndex = 35;
             this.chart5.Text = "chart5";
             // 
             // chart6
             // 
-            chartArea36.Name = "ChartArea1";
-            chartArea36.Visible = false;
-            this.chart6.ChartAreas.Add(chartArea36);
-            legend36.Name = "Legend1";
-            this.chart6.Legends.Add(legend36);
+            chartArea18.Name = "ChartArea1";
+            this.chart6.ChartAreas.Add(chartArea18);
+            legend18.Name = "Legend1";
+            this.chart6.Legends.Add(legend18);
             this.chart6.Location = new System.Drawing.Point(21, 570);
             this.chart6.Name = "chart6";
-            series36.ChartArea = "ChartArea1";
-            series36.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series36.CustomProperties = "IsXAxisQuantitative=False";
-            series36.Legend = "Legend1";
-            series36.Name = "İrtifa Farkı";
-            this.chart6.Series.Add(series36);
+            series18.ChartArea = "ChartArea1";
+            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series18.CustomProperties = "IsXAxisQuantitative=False";
+            series18.Legend = "Legend1";
+            series18.Name = "İrtifa Farkı";
+            this.chart6.Series.Add(series18);
             this.chart6.Size = new System.Drawing.Size(300, 166);
             this.chart6.TabIndex = 36;
             this.chart6.Text = "chart6";
@@ -752,12 +756,122 @@
             this.pictureBox1.TabIndex = 64;
             this.pictureBox1.TabStop = false;
             // 
+            // ModelInisHiziKontrol
+            // 
+            this.ModelInisHiziKontrol.AutoSize = true;
+            this.ModelInisHiziKontrol.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.ModelInisHiziKontrol.Location = new System.Drawing.Point(512, 290);
+            this.ModelInisHiziKontrol.Name = "ModelInisHiziKontrol";
+            this.ModelInisHiziKontrol.Size = new System.Drawing.Size(13, 13);
+            this.ModelInisHiziKontrol.TabIndex = 66;
+            this.ModelInisHiziKontrol.Text = "0";
+            // 
+            // GorevInisHiziKontrol
+            // 
+            this.GorevInisHiziKontrol.AutoSize = true;
+            this.GorevInisHiziKontrol.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.GorevInisHiziKontrol.Location = new System.Drawing.Point(524, 290);
+            this.GorevInisHiziKontrol.Name = "GorevInisHiziKontrol";
+            this.GorevInisHiziKontrol.Size = new System.Drawing.Size(13, 13);
+            this.GorevInisHiziKontrol.TabIndex = 67;
+            this.GorevInisHiziKontrol.Text = "0";
+            // 
+            // TasiyiciGpsKontrol
+            // 
+            this.TasiyiciGpsKontrol.AutoSize = true;
+            this.TasiyiciGpsKontrol.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.TasiyiciGpsKontrol.Location = new System.Drawing.Point(536, 290);
+            this.TasiyiciGpsKontrol.Name = "TasiyiciGpsKontrol";
+            this.TasiyiciGpsKontrol.Size = new System.Drawing.Size(13, 13);
+            this.TasiyiciGpsKontrol.TabIndex = 68;
+            this.TasiyiciGpsKontrol.Text = "0";
+            // 
+            // GorevGpsKontrol
+            // 
+            this.GorevGpsKontrol.AutoSize = true;
+            this.GorevGpsKontrol.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.GorevGpsKontrol.Location = new System.Drawing.Point(548, 290);
+            this.GorevGpsKontrol.Name = "GorevGpsKontrol";
+            this.GorevGpsKontrol.Size = new System.Drawing.Size(13, 13);
+            this.GorevGpsKontrol.TabIndex = 69;
+            this.GorevGpsKontrol.Text = "0";
+            // 
+            // AyrilmaKontrol
+            // 
+            this.AyrilmaKontrol.AutoSize = true;
+            this.AyrilmaKontrol.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.AyrilmaKontrol.Location = new System.Drawing.Point(560, 290);
+            this.AyrilmaKontrol.Name = "AyrilmaKontrol";
+            this.AyrilmaKontrol.Size = new System.Drawing.Size(13, 13);
+            this.AyrilmaKontrol.TabIndex = 70;
+            this.AyrilmaKontrol.Text = "0";
+            // 
+            // ModelInisHiziKontrolRenk
+            // 
+            this.ModelInisHiziKontrolRenk.AutoSize = true;
+            this.ModelInisHiziKontrolRenk.BackColor = System.Drawing.Color.LawnGreen;
+            this.ModelInisHiziKontrolRenk.Location = new System.Drawing.Point(513, 312);
+            this.ModelInisHiziKontrolRenk.Name = "ModelInisHiziKontrolRenk";
+            this.ModelInisHiziKontrolRenk.Size = new System.Drawing.Size(10, 13);
+            this.ModelInisHiziKontrolRenk.TabIndex = 71;
+            this.ModelInisHiziKontrolRenk.Text = " ";
+            // 
+            // GorevInisHiziKontrolRenk
+            // 
+            this.GorevInisHiziKontrolRenk.AutoSize = true;
+            this.GorevInisHiziKontrolRenk.BackColor = System.Drawing.Color.LawnGreen;
+            this.GorevInisHiziKontrolRenk.Location = new System.Drawing.Point(525, 312);
+            this.GorevInisHiziKontrolRenk.Name = "GorevInisHiziKontrolRenk";
+            this.GorevInisHiziKontrolRenk.Size = new System.Drawing.Size(10, 13);
+            this.GorevInisHiziKontrolRenk.TabIndex = 72;
+            this.GorevInisHiziKontrolRenk.Text = " ";
+            // 
+            // TasiyiciGpsKontrolRenk
+            // 
+            this.TasiyiciGpsKontrolRenk.AutoSize = true;
+            this.TasiyiciGpsKontrolRenk.BackColor = System.Drawing.Color.LawnGreen;
+            this.TasiyiciGpsKontrolRenk.Location = new System.Drawing.Point(537, 312);
+            this.TasiyiciGpsKontrolRenk.Name = "TasiyiciGpsKontrolRenk";
+            this.TasiyiciGpsKontrolRenk.Size = new System.Drawing.Size(10, 13);
+            this.TasiyiciGpsKontrolRenk.TabIndex = 73;
+            this.TasiyiciGpsKontrolRenk.Text = " ";
+            // 
+            // GorevGpsKontrolRenk
+            // 
+            this.GorevGpsKontrolRenk.AutoSize = true;
+            this.GorevGpsKontrolRenk.BackColor = System.Drawing.Color.LawnGreen;
+            this.GorevGpsKontrolRenk.Location = new System.Drawing.Point(549, 312);
+            this.GorevGpsKontrolRenk.Name = "GorevGpsKontrolRenk";
+            this.GorevGpsKontrolRenk.Size = new System.Drawing.Size(10, 13);
+            this.GorevGpsKontrolRenk.TabIndex = 74;
+            this.GorevGpsKontrolRenk.Text = " ";
+            // 
+            // AyrilmaKontrolRenk
+            // 
+            this.AyrilmaKontrolRenk.AutoSize = true;
+            this.AyrilmaKontrolRenk.BackColor = System.Drawing.Color.LawnGreen;
+            this.AyrilmaKontrolRenk.Location = new System.Drawing.Point(561, 312);
+            this.AyrilmaKontrolRenk.Name = "AyrilmaKontrolRenk";
+            this.AyrilmaKontrolRenk.Size = new System.Drawing.Size(10, 13);
+            this.AyrilmaKontrolRenk.TabIndex = 75;
+            this.AyrilmaKontrolRenk.Text = " ";
+            // 
             // SATX
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.MenuHighlight;
             this.ClientSize = new System.Drawing.Size(1234, 757);
+            this.Controls.Add(this.AyrilmaKontrolRenk);
+            this.Controls.Add(this.GorevGpsKontrolRenk);
+            this.Controls.Add(this.TasiyiciGpsKontrolRenk);
+            this.Controls.Add(this.GorevInisHiziKontrolRenk);
+            this.Controls.Add(this.ModelInisHiziKontrolRenk);
+            this.Controls.Add(this.AyrilmaKontrol);
+            this.Controls.Add(this.GorevGpsKontrol);
+            this.Controls.Add(this.TasiyiciGpsKontrol);
+            this.Controls.Add(this.GorevInisHiziKontrol);
+            this.Controls.Add(this.ModelInisHiziKontrol);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label34);
             this.Controls.Add(this.label33);
@@ -888,6 +1002,16 @@
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label ModelInisHiziKontrol;
+        private System.Windows.Forms.Label GorevInisHiziKontrol;
+        private System.Windows.Forms.Label TasiyiciGpsKontrol;
+        private System.Windows.Forms.Label GorevGpsKontrol;
+        private System.Windows.Forms.Label AyrilmaKontrol;
+        private System.Windows.Forms.Label ModelInisHiziKontrolRenk;
+        private System.Windows.Forms.Label GorevInisHiziKontrolRenk;
+        private System.Windows.Forms.Label TasiyiciGpsKontrolRenk;
+        private System.Windows.Forms.Label GorevGpsKontrolRenk;
+        private System.Windows.Forms.Label AyrilmaKontrolRenk;
     }
 }
 

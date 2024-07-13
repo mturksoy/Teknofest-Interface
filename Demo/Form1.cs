@@ -10,11 +10,14 @@ namespace Demo
     public partial class SATX : Form
     {
         float x = 0, y = 0, z = 0;
-        bool cx = false,cy = false, cz = false;
+        bool cx = false, cy = false, cz = false;
+        Timer timer1;
+
         public SATX()
         {
             InitializeComponent();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             string[] portlar = SerialPort.GetPortNames();
@@ -24,7 +27,15 @@ namespace Demo
             }
             GL.ClearColor(Color.Navy);
             TimerXYZ.Interval = 1;
+            TimerXYZ.Tick += new EventHandler(TimerXYZ_Tick);
 
+            timer1 = new Timer();
+            timer1.Interval = 1000; // 1 saniyede bir tetiklenecek
+            timer1.Tick += new EventHandler(timer1_Tick);
+
+            readingPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+            // Add the gray panels (this part is unchanged)
             // Gri arka plan rengi olan panel
             Panel panelGriArkaPlan1 = new Panel();
             panelGriArkaPlan1.BackColor = Color.Gray;
@@ -45,20 +56,54 @@ namespace Demo
             panelGriArkaPlan3.Location = new Point(973, 140);
             panelGriArkaPlan3.Size = new Size(1220 - 973, 695 - 100);
             this.Controls.Add(panelGriArkaPlan3);
-
-
         }
 
-        private void label7_Click(object sender, EventArgs e)
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
+            try
+            {
+                string sonuc = readingPort.ReadLine();
+                string[] paket = sonuc.Split('*');
 
+                // Değişkenleri ayrıştır
+                if (paket.Length >= 5)
+                {
+                    if (float.TryParse(paket[0], out float modelInisHizi) &&
+                        float.TryParse(paket[1], out float gorevInisHizi) &&
+                        float.TryParse(paket[2], out float tasiyiciGps) &&
+                        float.TryParse(paket[3], out float gorevGps) &&
+                        bool.TryParse(paket[4], out bool ayrilmaDurumu))
+                    {
+                        // Kontrolleri gerçekleştir
+                        CheckModelInisHizi(modelInisHizi);
+                        CheckGorevInisHizi(gorevInisHizi);
+                        CheckTasiyiciGps(tasiyiciGps);
+                        CheckGorevGps(gorevGps);
+                        CheckAyrilmaDurumu(ayrilmaDurumu);
+
+                        // Label güncellemeleri (UI güncellemesi ana thread'de yapılmalı)
+                        this.Invoke((MethodInvoker)delegate {
+                            labelxx.Text = paket[0];
+                            labelyy.Text = paket[1];
+                            labelzz.Text = paket[2];
+                        });
+
+                        x = modelInisHizi;
+                        y = gorevInisHizi;
+                        z = tasiyiciGps;
+                    }
+                    else
+                    {
+                        // Veri dönüştürme hatası
+                        ShowWarning("Seri porttan gelen verilerde format hatası.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Veri okuma hatası: {ex.Message}");
+            }
         }
-        private void TimerXYZ_Tick(object sender, EventArgs e)
-        {
-            
-        }
-
-
 
         private void baslatButton_Click(object sender, EventArgs e)
         {
@@ -68,9 +113,8 @@ namespace Demo
                 readingPort.PortName = serialPortBox.Text;
                 if (!readingPort.IsOpen)
                 {
-                    timer.Start();
+                    timer1.Start();
                     readingPort.Open();
-                    //MessageBox.Show("BAĞLANTI KURULDU");
                     durdurButton.Enabled = true;
                     baglanButton.Enabled = false;
                 }
@@ -79,13 +123,13 @@ namespace Demo
             {
                 MessageBox.Show("BAĞLANTI KURULAMADI");
                 durdurButton.Enabled = true;
-                //durdurButton.Enabled = false;
             }
         }
+
         private void durdurButton_Click(object sender, EventArgs e)
         {
             readingPort.Close();
-            timer.Stop();
+            timer1.Stop();
             baglanButton.Enabled = true;
             durdurButton.Enabled = false;
             MessageBox.Show("BAĞLANTI KESİLDİ");
@@ -112,63 +156,125 @@ namespace Demo
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
 
-            GL.Rotate(x, 1.0, 0.0, 0.0);//Yönlendirme kısımları
+            GL.Rotate(x, 1.0, 0.0, 0.0);
             GL.Rotate(z, 0.0, 1.0, 0.0);
             GL.Rotate(y, 0.0, 0.0, 1.0);
 
             silindir(step, topla, radius, 3, -5);
             koni(0.01f, 0.01f, radius, 3.0f, 3, 5);
             koni(0.01f, 0.01f, radius, 2.0f, -5.0f, -10.0f);
-            
 
             GL.Begin(BeginMode.Lines);
-
             GL.Color3(Color.FromArgb(250, 0, 0));
             GL.Vertex3(-30.0, 0.0, 0.0);
             GL.Vertex3(30.0, 0.0, 0.0);
-
-
             GL.Color3(Color.FromArgb(0, 0, 0));
             GL.Vertex3(0.0, 30.0, 0.0);
             GL.Vertex3(0.0, -30.0, 0.0);
-
             GL.Color3(Color.FromArgb(0, 0, 250));
             GL.Vertex3(0.0, 0.0, 30.0);
             GL.Vertex3(0.0, 0.0, -30.0);
-
             GL.End();
-            //GraphicsContext.CurrentContext.VSync = true;
             glControl1.SwapBuffers();
         }
-        private void color_template(float step)
+
+        private void CheckModelInisHizi(float hiz)
         {
-            if (step < 45)
-                GL.Color3(Color.FromArgb(255, 0, 0));
-            else if (step < 90)
-                GL.Color3(Color.FromArgb(255, 255, 255));
-            else if (step < 135)
-                GL.Color3(Color.FromArgb(255, 0, 0));
-            else if (step < 180)
-                GL.Color3(Color.FromArgb(255, 255, 255));
-            else if (step < 225)
-                GL.Color3(Color.FromArgb(255, 0, 0));
-            else if (step < 270)
-                GL.Color3(Color.FromArgb(255, 255, 255));
-            else if (step < 315)
-                GL.Color3(Color.FromArgb(255, 0, 0));
-            else if (step < 360)
-                GL.Color3(Color.FromArgb(255, 255, 255));
+            if (hiz < 12 || hiz > 14)
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    ModelInisHiziKontrol.Text = "1";
+                    ModelInisHiziKontrolRenk.BackColor = Color.Red;
+                });
+                ShowWarning("Model uydu iniş hızı 12-14 m/s dışında!");
+            }
+        }
+
+        private void CheckGorevInisHizi(float hiz)
+        {
+            if (hiz < 6 || hiz > 8)
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    GorevInisHiziKontrol.Text = "1";
+                    GorevInisHiziKontrolRenk.BackColor = Color.Red;
+                });
+                ShowWarning("Görev yükü iniş hızı 6-8 m/s dışında!");
+            }
+        }
+
+        private void CheckTasiyiciGps(float gps)
+        {
+            if (gps == 0) // 0 değeri veri alınamaması olarak varsayıldı, gerekirse düzenleyin
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    TasiyiciGpsKontrol.Text = "1";
+                    TasiyiciGpsKontrolRenk.BackColor = Color.Red;
+                });
+                ShowWarning("Taşıyıcı konum verisi alınamıyor!");
+            }
+        }
+
+        private void CheckGorevGps(float gps)
+        {
+            if (gps == 0) // 0 değeri veri alınamaması olarak varsayıldı, gerekirse düzenleyin
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    GorevGpsKontrol.Text = "1";
+                    GorevGpsKontrolRenk.BackColor = Color.Red;
+                });
+                ShowWarning("Görev yükü konum verisi alınamıyor!");
+            }
+        }
+
+        private void CheckAyrilmaDurumu(bool ayrilma)
+        {
+            if (!ayrilma)
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    AyrilmaKontrol.Text = "1";
+                    AyrilmaKontrolRenk.BackColor = Color.Red;
+                });
+                ShowWarning("Ayrılma gerçekleşmedi!");
+            }
+        }
+
+        private void ShowWarning(string message)
+        {
+            MessageBox.Show(message, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            cx = !cx;
+            TimerXYZ.Start();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            cy = !cy;
+            TimerXYZ.Start();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            cz = !cz;
+            TimerXYZ.Start();
+        }
+
+        private void glControl1_Load(object sender, EventArgs e)
+        {
+            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GL.Enable(EnableCap.DepthTest);
         }
 
         private void silindir(float step, float topla, float radius, float dikey1, float dikey2)
         {
             float eski_step = 0.1f;
-            GL.Begin(BeginMode.Quads);//Y EKSEN CIZIM DAİRENİN
+            GL.Begin(BeginMode.Quads);
 
             while (step <= 360)
             {
                 color_template(step);
-
                 float ciz1_x = (float)(radius * Math.Cos(step * Math.PI / 180F));
                 float ciz1_y = (float)(radius * Math.Sin(step * Math.PI / 180F));
                 GL.Vertex3(ciz1_x, dikey1, ciz1_y);
@@ -186,10 +292,9 @@ namespace Demo
             step = eski_step;
             topla = step;
 
-            while (step <= 180)// UST KAPAK
+            while (step <= 180)
             {
                 color_template(step);
-
                 float ciz1_x = (float)(radius * Math.Cos(step * Math.PI / 180F));
                 float ciz1_y = (float)(radius * Math.Sin(step * Math.PI / 180F));
                 GL.Vertex3(ciz1_x, dikey1, ciz1_y);
@@ -205,10 +310,9 @@ namespace Demo
             step = eski_step;
             topla = step;
 
-            while (step <= 180)//ALT KAPAK
+            while (step <= 180)
             {
                 color_template(step);
-
                 float ciz1_x = (float)(radius * Math.Cos(step * Math.PI / 180F));
                 float ciz1_y = (float)(radius * Math.Sin(step * Math.PI / 180F));
                 GL.Vertex3(ciz1_x, dikey2, ciz1_y);
@@ -224,67 +328,10 @@ namespace Demo
             GL.End();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-                string[] paket;
-                string sonuc = readingPort.ReadLine();
-                paket = sonuc.Split('*');
-                labelxx.Text = paket[0];
-                labelyy.Text = paket[1];
-                labelzz.Text = paket[2];
-                x = Convert.ToInt32(paket[0]);
-                y = Convert.ToInt32(paket[1]);
-                z = Convert.ToInt32(paket[2]);
-                glControl1.Invalidate();
-                readingPort.DiscardInBuffer();
-
-            }
-            catch
-            {
-
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if (cy == false)
-                cy = true;
-            else
-                cy = false;
-            TimerXYZ.Start();
-        }
-
-        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (cz == false)
-                cz = true;
-            else
-                cz = false;
-            TimerXYZ.Start();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (cx == false)
-                cx = true;
-            else
-                cx = false;
-            TimerXYZ.Start();
-        }
-
-        
-
         private void koni(float step, float topla, float radius1, float radius2, float dikey1, float dikey2)
         {
             float eski_step = 0.1f;
-            GL.Begin(BeginMode.Lines);//Y EKSEN CIZIM DAİRENİN
+            GL.Begin(BeginMode.Lines);
 
             while (step <= 360)
             {
@@ -315,15 +362,13 @@ namespace Demo
                 step += topla;
             }
             GL.End();
-
             GL.Begin(BeginMode.Lines);
             step = eski_step;
             topla = step;
 
-            while (step <= 180)// UST KAPAK
+            while (step <= 180)
             {
                 color_template(step);
-
                 float ciz1_x = (float)(radius2 * Math.Cos(step * Math.PI / 180F));
                 float ciz1_y = (float)(radius2 * Math.Sin(step * Math.PI / 180F));
                 GL.Vertex3(ciz1_x, dikey2, ciz1_y);
@@ -340,10 +385,57 @@ namespace Demo
             topla = step;
             GL.End();
         }
-        private void glControl1_Load(object sender, EventArgs e)
+
+        private void color_template(float step)
         {
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            GL.Enable(EnableCap.DepthTest);//sonradan yazdık
+            if (step < 45)
+                GL.Color3(Color.FromArgb(255, 0, 0));
+            else if (step < 90)
+                GL.Color3(Color.FromArgb(255, 255, 255));
+            else if (step < 135)
+                GL.Color3(Color.FromArgb(255, 0, 0));
+            else if (step < 180)
+                GL.Color3(Color.FromArgb(255, 255, 255));
+            else if (step < 225)
+                GL.Color3(Color.FromArgb(255, 0, 0));
+            else if (step < 270)
+                GL.Color3(Color.FromArgb(255, 255, 255));
+            else if (step < 315)
+                GL.Color3(Color.FromArgb(255, 0, 0));
+            else if (step < 360)
+                GL.Color3(Color.FromArgb(255, 255, 255));
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                string[] paket;
+                string sonuc = readingPort.ReadLine();
+                paket = sonuc.Split('*');
+                labelxx.Text = paket[0];
+                labelyy.Text = paket[1];
+                labelzz.Text = paket[2];
+                x = Convert.ToInt32(paket[0]);
+                y = Convert.ToInt32(paket[1]);
+                z = Convert.ToInt32(paket[2]);
+                glControl1.Invalidate();
+                readingPort.DiscardInBuffer();
+            }
+            catch
+            {
+                // Hata oluşursa, ek bir işlem yapmadan geç
+            }
+        }
+
+        private void TimerXYZ_Tick(object sender, EventArgs e)
+        {
+            // TimerXYZ'nin tıklama olayını tanımlayın
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            // label7 tıklama işlemi boş
         }
     }
 }

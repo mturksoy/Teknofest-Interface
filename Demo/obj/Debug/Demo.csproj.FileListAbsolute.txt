@@ -8,10 +8,10 @@ C:\Dev\teknofest\Demo\bin\Debug\OpenTK.xml
 C:\Dev\teknofest\Demo\bin\Debug\OpenTK.GLControl.pdb
 C:\Dev\teknofest\Demo\bin\Debug\OpenTK.GLControl.xml
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.AssemblyReference.cache
+C:\Dev\teknofest\Demo\obj\Debug\Demo.SATX.resources
 C:\Dev\teknofest\Demo\obj\Debug\Demo.Properties.Resources.resources
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.GenerateResource.cache
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.CoreCompileInputs.cache
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.Up2Date
 C:\Dev\teknofest\Demo\obj\Debug\Demo.exe
 C:\Dev\teknofest\Demo\obj\Debug\Demo.pdb
-C:\Dev\teknofest\Demo\obj\Debug\Demo.SATX.resources
