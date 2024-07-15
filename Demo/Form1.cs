@@ -10,12 +10,15 @@ namespace Demo
     public partial class SATX : Form
     {
         float x = 0, y = 0, z = 0;
-        bool cx = false, cy = false, cz = false;
         Timer timer1;
+        Timer fakeDataTimer;
+        HataFormu hataFormu;
 
         public SATX()
         {
             InitializeComponent();
+            hataFormu = new HataFormu();
+            hataFormu.Show();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,9 +36,14 @@ namespace Demo
             timer1.Interval = 1000; // 1 saniyede bir tetiklenecek
             timer1.Tick += new EventHandler(timer1_Tick);
 
-            readingPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+            // Sahte veri üretmek için timer ayarları
+            fakeDataTimer = new Timer();
+            fakeDataTimer.Interval = 1000; // 1 saniyede bir tetiklenecek
+            fakeDataTimer.Tick += new EventHandler(FakeDataTimer_Tick);
 
-            // Add the gray panels (this part is unchanged)
+            // Seri port olayını ekleyin (gerçek seri port olmadığında gerekmiyor)
+            // readingPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
             // Gri arka plan rengi olan panel
             Panel panelGriArkaPlan1 = new Panel();
             panelGriArkaPlan1.BackColor = Color.Gray;
@@ -58,21 +66,46 @@ namespace Demo
             this.Controls.Add(panelGriArkaPlan3);
         }
 
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private void FakeDataTimer_Tick(object sender, EventArgs e)
+        {
+            // Sahte veri üret
+            string fakeData = GenerateFakeData();
+            DataReceivedHandler(fakeData);
+        }
+
+        private string GenerateFakeData()
+        {
+            // Sahte veri oluştur (örneğin: 13*7*100*100*true*5*3*2)
+            Random rand = new Random();
+            float modelInisHizi = rand.Next(10, 16); // 10 ile 16 arasında rastgele bir hız
+            float gorevInisHizi = rand.Next(5, 10); // 5 ile 10 arasında rastgele bir hız
+            float tasiyiciGps = rand.Next(0, 20); // 0 ile 20 arasında rastgele bir konum değeri
+            float gorevGps = rand.Next(0, 20); // 0 ile 20 arasında rastgele bir konum değeri
+            bool ayrilmaDurumu = rand.Next(0, 2) == 1; // true veya false
+            float x = rand.Next(-10, 10); // x koordinatı
+            float y = rand.Next(-10, 10); // y koordinatı
+            float z = rand.Next(-10, 10); // z koordinatı
+
+            return $"{modelInisHizi}*{gorevInisHizi}*{tasiyiciGps}*{gorevGps}*{ayrilmaDurumu}*{x}*{y}*{z}";
+        }
+
+        private void DataReceivedHandler(string sonuc)
         {
             try
             {
-                string sonuc = readingPort.ReadLine();
                 string[] paket = sonuc.Split('*');
 
                 // Değişkenleri ayrıştır
-                if (paket.Length >= 5)
+                if (paket.Length >= 8)
                 {
                     if (float.TryParse(paket[0], out float modelInisHizi) &&
                         float.TryParse(paket[1], out float gorevInisHizi) &&
                         float.TryParse(paket[2], out float tasiyiciGps) &&
                         float.TryParse(paket[3], out float gorevGps) &&
-                        bool.TryParse(paket[4], out bool ayrilmaDurumu))
+                        bool.TryParse(paket[4], out bool ayrilmaDurumu) &&
+                        float.TryParse(paket[5], out float x) &&
+                        float.TryParse(paket[6], out float y) &&
+                        float.TryParse(paket[7], out float z))
                     {
                         // Kontrolleri gerçekleştir
                         CheckModelInisHizi(modelInisHizi);
@@ -83,14 +116,16 @@ namespace Demo
 
                         // Label güncellemeleri (UI güncellemesi ana thread'de yapılmalı)
                         this.Invoke((MethodInvoker)delegate {
-                            labelxx.Text = paket[0];
-                            labelyy.Text = paket[1];
-                            labelzz.Text = paket[2];
+                            labelxx.Text = x.ToString();
+                            labelyy.Text = y.ToString();
+                            labelzz.Text = z.ToString();
                         });
 
-                        x = modelInisHizi;
-                        y = gorevInisHizi;
-                        z = tasiyiciGps;
+                        this.x = x;
+                        this.y = y;
+                        this.z = z;
+
+                        glControl1.Invalidate(); // OpenGL çizim ekranını güncelle
                     }
                     else
                     {
@@ -109,15 +144,20 @@ namespace Demo
         {
             try
             {
-                readingPort.BaudRate = Convert.ToInt32(boundRateBox.Text);
-                readingPort.PortName = serialPortBox.Text;
-                if (!readingPort.IsOpen)
-                {
-                    timer1.Start();
-                    readingPort.Open();
-                    durdurButton.Enabled = true;
-                    baglanButton.Enabled = false;
-                }
+                // readingPort.BaudRate = Convert.ToInt32(boundRateBox.Text);
+                // readingPort.PortName = serialPortBox.Text;
+                // if (!readingPort.IsOpen)
+                // {
+                //     timer1.Start();
+                //     readingPort.Open();
+                //     durdurButton.Enabled = true;
+                //     baglanButton.Enabled = false;
+                // }
+
+                // Seri port yerine sahte veri timer'ını başlat
+                fakeDataTimer.Start();
+                durdurButton.Enabled = true;
+                baglanButton.Enabled = false;
             }
             catch (Exception)
             {
@@ -128,8 +168,11 @@ namespace Demo
 
         private void durdurButton_Click(object sender, EventArgs e)
         {
-            readingPort.Close();
-            timer1.Stop();
+            // readingPort.Close();
+            // timer1.Stop();
+
+            // Sahte veri timer'ını durdur
+            fakeDataTimer.Stop();
             baglanButton.Enabled = true;
             durdurButton.Enabled = false;
             MessageBox.Show("BAĞLANTI KESİLDİ");
@@ -137,12 +180,7 @@ namespace Demo
 
         private void glControl1_Paint(object sender, PaintEventArgs e)
         {
-            float step = 1.0f;
-            float topla = step;
-            float radius = 5.0f;
-            float dikey1 = radius, dikey2 = -radius;
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-            GL.Clear(ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(1.04f, 4 / 3, 1, 10000);
             Matrix4 lookat = Matrix4.LookAt(25, 0, 0, 0, 0, 0, 0, 1, 0);
@@ -157,12 +195,12 @@ namespace Demo
             GL.DepthFunc(DepthFunction.Less);
 
             GL.Rotate(x, 1.0, 0.0, 0.0);
-            GL.Rotate(z, 0.0, 1.0, 0.0);
-            GL.Rotate(y, 0.0, 0.0, 1.0);
+            GL.Rotate(y, 0.0, 1.0, 0.0);
+            GL.Rotate(z, 0.0, 0.0, 1.0);
 
-            silindir(step, topla, radius, 3, -5);
-            koni(0.01f, 0.01f, radius, 3.0f, 3, 5);
-            koni(0.01f, 0.01f, radius, 2.0f, -5.0f, -10.0f);
+            silindir(1.0f, 1.0f, 5.0f, 3, -5);
+            koni(0.01f, 0.01f, 5.0f, 3.0f, 3, 5);
+            koni(0.01f, 0.01f, 5.0f, 2.0f, -5.0f, -10.0f);
 
             GL.Begin(BeginMode.Lines);
             GL.Color3(Color.FromArgb(250, 0, 0));
@@ -186,7 +224,14 @@ namespace Demo
                     ModelInisHiziKontrol.Text = "1";
                     ModelInisHiziKontrolRenk.BackColor = Color.Red;
                 });
-                ShowWarning("Model uydu iniş hızı 12-14 m/s dışında!");
+                AddHata("Model uydu iniş hızı 12-14 m/s dışında!");
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    ModelInisHiziKontrol.Text = "0";
+                    ModelInisHiziKontrolRenk.BackColor = Color.LawnGreen;
+                });
             }
         }
 
@@ -198,7 +243,14 @@ namespace Demo
                     GorevInisHiziKontrol.Text = "1";
                     GorevInisHiziKontrolRenk.BackColor = Color.Red;
                 });
-                ShowWarning("Görev yükü iniş hızı 6-8 m/s dışında!");
+                AddHata("Görev yükü iniş hızı 6-8 m/s dışında!");
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    GorevInisHiziKontrol.Text = "0";
+                    GorevInisHiziKontrolRenk.BackColor = Color.LawnGreen;
+                });
             }
         }
 
@@ -210,7 +262,14 @@ namespace Demo
                     TasiyiciGpsKontrol.Text = "1";
                     TasiyiciGpsKontrolRenk.BackColor = Color.Red;
                 });
-                ShowWarning("Taşıyıcı konum verisi alınamıyor!");
+                AddHata("Taşıyıcı konum verisi alınamıyor!");
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    TasiyiciGpsKontrol.Text = "0";
+                    TasiyiciGpsKontrolRenk.BackColor = Color.LawnGreen;
+                });
             }
         }
 
@@ -222,7 +281,14 @@ namespace Demo
                     GorevGpsKontrol.Text = "1";
                     GorevGpsKontrolRenk.BackColor = Color.Red;
                 });
-                ShowWarning("Görev yükü konum verisi alınamıyor!");
+                AddHata("Görev yükü konum verisi alınamıyor!");
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    GorevGpsKontrol.Text = "0";
+                    GorevGpsKontrolRenk.BackColor = Color.LawnGreen;
+                });
             }
         }
 
@@ -234,31 +300,34 @@ namespace Demo
                     AyrilmaKontrol.Text = "1";
                     AyrilmaKontrolRenk.BackColor = Color.Red;
                 });
-                ShowWarning("Ayrılma gerçekleşmedi!");
+                AddHata("Ayrılma gerçekleşmedi!");
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate {
+                    AyrilmaKontrol.Text = "0";
+                    AyrilmaKontrolRenk.BackColor = Color.LawnGreen;
+                });
+            }
+        }
+
+        private void AddHata(string hata)
+        {
+            if (hataFormu.InvokeRequired)
+            {
+                hataFormu.Invoke((MethodInvoker)delegate {
+                    hataFormu.AddHata(hata);
+                });
+            }
+            else
+            {
+                hataFormu.AddHata(hata);
             }
         }
 
         private void ShowWarning(string message)
         {
             MessageBox.Show(message, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            cx = !cx;
-            TimerXYZ.Start();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            cy = !cy;
-            TimerXYZ.Start();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            cz = !cz;
-            TimerXYZ.Start();
         }
 
         private void glControl1_Load(object sender, EventArgs e)

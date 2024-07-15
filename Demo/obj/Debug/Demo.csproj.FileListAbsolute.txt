@@ -15,3 +15,4 @@ C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.CoreCompileInputs.cache
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.Up2Date
 C:\Dev\teknofest\Demo\obj\Debug\Demo.exe
 C:\Dev\teknofest\Demo\obj\Debug\Demo.pdb
+C:\Dev\teknofest\Demo\obj\Debug\Demo.HataFormu.resources
