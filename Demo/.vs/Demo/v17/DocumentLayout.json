@@ -3,28 +3,16 @@
   "WorkspaceRootPath": "C:\\Dev\\teknofest\\Demo\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|c:\\dev\\teknofest\\demo\\sat_x_interfaceprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:sat_x_interfaceprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|c:\\dev\\teknofest\\demo\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\sat_x_interfaceprogram.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:sat_x_interfaceprogram.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\hataformu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:hataformu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\hataformu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:hataformu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\hataformu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:hataformu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|C:\\Dev\\teknofest\\Demo\\sat_x_interfaceprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F4F95553-4A08-4375-821D-E7ABE1CBF034}|Demo.csproj|solutionrelative:sat_x_interfaceprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,80 +22,47 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HataFormu.Designer.cs",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\HataFormu.Designer.cs",
-              "RelativeDocumentMoniker": "HataFormu.Designer.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\HataFormu.Designer.cs",
-              "RelativeToolTip": "HataFormu.Designer.cs",
-              "ViewState": "AQIAAAcAAAAAAAAAAAAAwCoAAAAAAAAA",
+              "DocumentIndex": 0,
+              "Title": "SAT_X_InterfaceProgram.cs",
+              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs",
+              "RelativeDocumentMoniker": "SAT_X_InterfaceProgram.cs",
+              "ToolTip": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs",
+              "RelativeToolTip": "SAT_X_InterfaceProgram.cs",
+              "ViewState": "AQIAACIAAAAAAAAAAADwvzIAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-14T19:06:09.901Z"
+              "WhenOpened": "2024-07-13T08:15:06.883Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "HataFormu.cs",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\HataFormu.cs",
-              "RelativeDocumentMoniker": "HataFormu.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\HataFormu.cs",
-              "RelativeToolTip": "HataFormu.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAbAAAA",
+              "Title": "SAT_X_InterfaceProgram.cs [Design]",
+              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs",
+              "RelativeDocumentMoniker": "SAT_X_InterfaceProgram.cs",
+              "ToolTip": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs [Design]",
+              "RelativeToolTip": "SAT_X_InterfaceProgram.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-14T18:59:08.29Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "HataFormu.cs [Design]",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\HataFormu.cs",
-              "RelativeDocumentMoniker": "HataFormu.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\HataFormu.cs [Design]",
-              "RelativeToolTip": "HataFormu.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-14T18:59:05.184Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\Form1.cs [Design]",
-              "RelativeToolTip": "Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-13T08:42:39.094Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\Form1.Designer.cs",
-              "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AQIAAMoAAAAAAAAAAAAjwNwAAAA/AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-13T08:37:53.884Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-13T08:42:39.094Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\Dev\\teknofest\\Demo\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAOcBAAAAAAAAAAAAwO8BAAA7AAAA",
+              "Title": "SAT_X_InterfaceProgram.Designer.cs",
+              "DocumentMoniker": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.Designer.cs",
+              "RelativeDocumentMoniker": "SAT_X_InterfaceProgram.Designer.cs",
+              "ToolTip": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.Designer.cs",
+              "RelativeToolTip": "SAT_X_InterfaceProgram.Designer.cs",
+              "ViewState": "AQIAADEAAAAAAAAAAAAiwEMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-13T08:15:06.883Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-13T19:31:13.916Z"
             }
           ]
         }

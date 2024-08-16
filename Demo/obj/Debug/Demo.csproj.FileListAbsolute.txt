@@ -15,4 +15,14 @@ C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.CoreCompileInputs.cache
 C:\Dev\teknofest\Demo\obj\Debug\Demo.csproj.Up2Date
 C:\Dev\teknofest\Demo\obj\Debug\Demo.exe
 C:\Dev\teknofest\Demo\obj\Debug\Demo.pdb
-C:\Dev\teknofest\Demo\obj\Debug\Demo.HataFormu.resources
+C:\Dev\teknofest\Demo\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+C:\Dev\teknofest\Demo\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+C:\Dev\teknofest\Demo\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.Core.dll
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.Core.xml
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+C:\Dev\teknofest\Demo\bin\Debug\Newtonsoft.Json.dll
+C:\Dev\teknofest\Demo\bin\Debug\Newtonsoft.Json.xml
