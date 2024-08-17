@@ -220,7 +220,7 @@ namespace Demo
                 JObject telemetryData = JObject.Parse(jsonData);
 
                 ulong paketNumarasi = telemetryData["paketNumarasi"].ToObject<ulong>();
-                int uyduStatusu = telemetryData["uyduStatusu"].ToObject<int>();
+                uint uyduStatusu = telemetryData["uyduStatusu"].ToObject<uint>();
                 string gondermeSaati = telemetryData["gondermeSaati"].ToString();
                 float basinc1 = telemetryData["basinc1"].ToObject<float>();
                 float basinc2 = telemetryData["basinc2"].ToObject<float>();
@@ -236,8 +236,8 @@ namespace Demo
                 float pitch = telemetryData["pitch"].ToObject<float>();
                 float roll = telemetryData["roll"].ToObject<float>();
                 float yaw = telemetryData["yaw"].ToObject<float>();
-                int rhrh = telemetryData["rhrh"].ToObject<int>();
-                int iotData = telemetryData["iotData"].ToObject<int>();
+                uint rhrh = telemetryData["rhrh"].ToObject<uint>();
+                uint iotData = telemetryData["iotData"].ToObject<uint>();
 
                 elapsedTime += timeStep;
 
