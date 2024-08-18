@@ -22,8 +22,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -32,14 +36,10 @@
               "RelativeDocumentMoniker": "SAT_X_InterfaceProgram.cs",
               "ToolTip": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs",
               "RelativeToolTip": "SAT_X_InterfaceProgram.cs",
-              "ViewState": "AQIAAB4AAAAAAAAAAAAAADMAAABLAAAA",
+              "ViewState": "AQIAACMAAAAAAAAAAAAiwDQAAABLAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-13T08:15:06.883Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
@@ -50,7 +50,8 @@
               "ToolTip": "C:\\Dev\\teknofest\\Demo\\SAT_X_InterfaceProgram.cs [Design]",
               "RelativeToolTip": "SAT_X_InterfaceProgram.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-13T08:42:39.094Z"
+              "WhenOpened": "2024-07-13T08:42:39.094Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
@@ -62,7 +63,8 @@
               "RelativeToolTip": "SAT_X_InterfaceProgram.Designer.cs",
               "ViewState": "AQIAADEAAAAAAAAAAAAiwEMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-13T19:31:13.916Z"
+              "WhenOpened": "2024-08-13T19:31:13.916Z",
+              "EditorCaption": ""
             }
           ]
         }

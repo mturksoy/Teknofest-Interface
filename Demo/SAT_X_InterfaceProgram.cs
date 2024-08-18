@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Demo
 {
@@ -216,11 +217,122 @@ namespace Demo
         {
             try
             {
-                string jsonData = readingPort.ReadLine();
-                JObject telemetryData = JObject.Parse(jsonData);
+                // Veri alımını bir arka plan iş parçacığına taşı
+                Task.Run(async () =>
+                {
+                    JObject telemetryData = await ReadAndParseDataAsync();
 
+                    if (telemetryData != null)
+                    {
+                        UpdateTelemetryData(telemetryData);
+                        CheckAndHandleErrors(
+                            telemetryData["uyduStatusu"].ToObject<int>(),
+                            telemetryData["inisHizi"].ToObject<float>(),
+                            telemetryData["basinc2"].ToObject<float>(),
+                            telemetryData["gps1Enlem"].ToObject<double>(),
+                            telemetryData["gps1Boylam"].ToObject<double>(),
+                            telemetryData["gps1Yukseklik"].ToObject<float>()
+                        );
+                        SaveTelemetryData(telemetryData, hataKoduDegeri);
+                        uyduGlControl.Invalidate();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Veri işleme hatası: {ex.Message}");
+            }
+        }
+
+
+        private async Task<JObject> ReadAndParseDataAsync()
+        {
+            try
+            {
+                if (readingPort.BytesToRead > 0)
+                {
+                    string jsonData = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            // Gelen veriyi oku
+                            string rawData = readingPort.ReadLine();
+
+                            // Geçersiz karakterleri temizleme (örneğin, null karakterler)
+                            rawData = rawData.Replace("\0", "").Trim();
+
+                            // Veri kontrolü
+                            if (string.IsNullOrEmpty(rawData))
+                            {
+                                Console.WriteLine("Boş veri alındı.");
+                                return null;
+                            }
+
+                            Console.WriteLine($"Alınan veri: {rawData}");
+
+                            // JSON formatında değilse geçersiz JSON olarak kabul et
+                            if (rawData.StartsWith("{") && rawData.EndsWith("}"))
+                            {
+                                return rawData;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Geçersiz JSON formatı");
+                                return null;
+                            }
+                        }
+                        catch (ArgumentOutOfRangeException ex)
+                        {
+                            Console.WriteLine($"Veri okuma hatası: Negatif olmayan bir sayı gerekiyor. Detay: {ex.Message}");
+                            return null;
+                        }
+                        catch (OverflowException ex)
+                        {
+                            Console.WriteLine($"Veri okuma hatası: Aritmetik işlem taşmayla sonuçlandı. Detay: {ex.Message}");
+                            return null;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Genel veri okuma hatası: {ex.Message}");
+                            return null;
+                        }
+                    });
+
+                    if (!string.IsNullOrEmpty(jsonData))
+                    {
+                        // JSON verisini parse et
+                        return JObject.Parse(jsonData);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Boş veya geçersiz veri alındı.");
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Seri portta veri bulunmuyor.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    MessageBox.Show($"Veri okuma hatası: {ex.Message}");
+                });
+                return null;
+            }
+        }
+
+
+
+        private void UpdateTelemetryData(JObject telemetryData)
+        {
+            try
+            {
                 ulong paketNumarasi = telemetryData["paketNumarasi"].ToObject<ulong>();
-                uint uyduStatusu = telemetryData["uyduStatusu"].ToObject<uint>();
+                int uyduStatusu = telemetryData["uyduStatusu"].ToObject<int>();
                 string gondermeSaati = telemetryData["gondermeSaati"].ToString();
                 float basinc1 = telemetryData["basinc1"].ToObject<float>();
                 float basinc2 = telemetryData["basinc2"].ToObject<float>();
@@ -236,109 +348,117 @@ namespace Demo
                 float pitch = telemetryData["pitch"].ToObject<float>();
                 float roll = telemetryData["roll"].ToObject<float>();
                 float yaw = telemetryData["yaw"].ToObject<float>();
-                uint rhrh = telemetryData["rhrh"].ToObject<uint>();
-                uint iotData = telemetryData["iotData"].ToObject<uint>();
+                int rhrh = telemetryData["rhrh"].ToObject<int>();
+                int iotData = telemetryData["iotData"].ToObject<int>();
 
                 elapsedTime += timeStep;
 
                 this.gpsEnlem = gps1Enlem;
                 this.gpsBoylam = gps1Boylam;
-
-                UpdateMap();
-
-                this.Invoke((MethodInvoker)delegate {
-                    UpdateChart(gyBasincChart, elapsedTime, basinc1);
-                    UpdateChart(tBasincChart, elapsedTime, basinc2);
-                    UpdateChart(gyYukseklikChart, elapsedTime, yukseklik1);
-                    UpdateChart(tYukseklikChart, elapsedTime, yukseklik2);
-                    UpdateChart(irtifaFarkiChart, elapsedTime, irtifaFarki);
-                    UpdateChart(inisHiziChart, elapsedTime, inisHizi);
-                    UpdateChart(sicaklikChart, elapsedTime, sicaklik);
-                    UpdateChart(pilGerilimiChart, elapsedTime, pilGerilimi);
-
-                    UpdateChartTimeRange(gyBasincChart);
-                    UpdateChartTimeRange(tBasincChart);
-                    UpdateChartTimeRange(gyYukseklikChart);
-                    UpdateChartTimeRange(tYukseklikChart);
-                    UpdateChartTimeRange(irtifaFarkiChart);
-                    UpdateChartTimeRange(inisHiziChart);
-                    UpdateChartTimeRange(sicaklikChart);
-                    UpdateChartTimeRange(pilGerilimiChart);
-                });
-
-                this.Invoke((MethodInvoker)delegate {
-                    paketNumarasiText.Text = paketNumarasi.ToString();
-                    uyduStatusuText.Text = uyduStatusu.ToString();
-                    gondermeSaatiText.Text = gondermeSaati;
-                    gyBasincText.Text = basinc1.ToString();
-                    tasiyiciBasincText.Text = basinc2.ToString();
-                    gyYukseklikText.Text = yukseklik1.ToString();
-                    tasiyiciYukseklikText.Text = yukseklik2.ToString();
-                    irtifaFarkiText.Text = irtifaFarki.ToString();
-                    inisHiziText.Text = inisHizi.ToString();
-                    sicaklikText.Text = sicaklik.ToString();
-                    pilGerilimiText.Text = pilGerilimi.ToString();
-                    latitudeText.Text = gps1Enlem.ToString();
-                    longitudeText.Text = gps1Boylam.ToString();
-                    altitudeText.Text = gps1Yukseklik.ToString();
-                    pitchText.Text = pitch.ToString();
-                    rollText.Text = roll.ToString();
-                    yawText.Text = yaw.ToString();
-                    rhrhText.Text = rhrh.ToString();
-                    iotText.Text = iotData.ToString();
-                });
-
-                if ((inisHizi < 12 || inisHizi > 14) && uyduStatusu == 2)
-                {
-                    CheckModelInisHizi();
-                }
-                else
-                {
-                    ResetModelInisHizi();
-                }
-
-                if ((inisHizi < 6 || inisHizi > 8) && uyduStatusu == 4)
-                {
-                    CheckGorevInisHizi();
-                }
-                else
-                {
-                    ResetGorevInisHizi();
-                }
-
-                if (IsDataMissing(basinc2))
-                {
-                    CheckTasiyiciBasinc();
-                }
-                else
-                {
-                    ResetTasiyiciBasinc();
-                }
-
-                if (IsDataMissing(gps1Enlem, gps1Boylam, gps1Yukseklik))
-                {
-                    CheckGorevGps();
-                }
-                else
-                {
-                    ResetGorevGps();
-                }
-
-                hataKoduDegeri = HataKoduHesapla();
-                HataKoduDegerText.Text = hataKoduDegeri;
-
-                SaveTelemetryData(telemetryData, hataKoduDegeri);
-
                 this.x = pitch;
                 this.y = roll;
                 this.z = yaw;
-                uyduGlControl.Invalidate();
+
+                UpdateUI(paketNumarasi, uyduStatusu, gondermeSaati, basinc1, basinc2, yukseklik1, yukseklik2, irtifaFarki, inisHizi, sicaklik, pilGerilimi, gps1Enlem, gps1Boylam, gps1Yukseklik, pitch, roll, yaw, rhrh, iotData);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Veri okuma hatası: {ex.Message}");
+                MessageBox.Show($"Telemetri verilerini güncelleme hatası: {ex.Message}");
             }
         }
+
+        private void UpdateUI(ulong paketNumarasi, int uyduStatusu, string gondermeSaati, float basinc1, float basinc2, float yukseklik1, float yukseklik2, float irtifaFarki, float inisHizi, float sicaklik, float pilGerilimi, double gps1Enlem, double gps1Boylam, float gps1Yukseklik, float pitch, float roll, float yaw, int rhrh, int iotData)
+        {
+            this.Invoke((MethodInvoker)delegate {
+                paketNumarasiText.Text = paketNumarasi.ToString();
+                uyduStatusuText.Text = uyduStatusu.ToString();
+                gondermeSaatiText.Text = gondermeSaati;
+                gyBasincText.Text = basinc1.ToString();
+                tasiyiciBasincText.Text = basinc2.ToString();
+                gyYukseklikText.Text = yukseklik1.ToString();
+                tasiyiciYukseklikText.Text = yukseklik2.ToString();
+                irtifaFarkiText.Text = irtifaFarki.ToString();
+                inisHiziText.Text = inisHizi.ToString();
+                sicaklikText.Text = sicaklik.ToString();
+                pilGerilimiText.Text = pilGerilimi.ToString();
+                latitudeText.Text = gps1Enlem.ToString();
+                longitudeText.Text = gps1Boylam.ToString();
+                altitudeText.Text = gps1Yukseklik.ToString();
+                pitchText.Text = pitch.ToString();
+                rollText.Text = roll.ToString();
+                yawText.Text = yaw.ToString();
+                rhrhText.Text = rhrh.ToString();
+                iotText.Text = iotData.ToString();
+
+                UpdateMap();
+                UpdateCharts(basinc1, basinc2, yukseklik1, yukseklik2, irtifaFarki, inisHizi, sicaklik, pilGerilimi);
+            });
+        }
+
+        private void UpdateCharts(float basinc1, float basinc2, float yukseklik1, float yukseklik2, float irtifaFarki, float inisHizi, float sicaklik, float pilGerilimi)
+        {
+            UpdateChart(gyBasincChart, elapsedTime, basinc1);
+            UpdateChart(tBasincChart, elapsedTime, basinc2);
+            UpdateChart(gyYukseklikChart, elapsedTime, yukseklik1);
+            UpdateChart(tYukseklikChart, elapsedTime, yukseklik2);
+            UpdateChart(irtifaFarkiChart, elapsedTime, irtifaFarki);
+            UpdateChart(inisHiziChart, elapsedTime, inisHizi);
+            UpdateChart(sicaklikChart, elapsedTime, sicaklik);
+            UpdateChart(pilGerilimiChart, elapsedTime, pilGerilimi);
+
+            UpdateChartTimeRange(gyBasincChart);
+            UpdateChartTimeRange(tBasincChart);
+            UpdateChartTimeRange(gyYukseklikChart);
+            UpdateChartTimeRange(tYukseklikChart);
+            UpdateChartTimeRange(irtifaFarkiChart);
+            UpdateChartTimeRange(inisHiziChart);
+            UpdateChartTimeRange(sicaklikChart);
+            UpdateChartTimeRange(pilGerilimiChart);
+        }
+
+        private void CheckAndHandleErrors(int uyduStatusu, float inisHizi, float basinc2, double gps1Enlem, double gps1Boylam, float gps1Yukseklik)
+        {
+            if ((inisHizi < 12 || inisHizi > 14) && uyduStatusu == 2)
+            {
+                CheckModelInisHizi();
+            }
+            else
+            {
+                ResetModelInisHizi();
+            }
+
+            if ((inisHizi < 6 || inisHizi > 8) && uyduStatusu == 4)
+            {
+                CheckGorevInisHizi();
+            }
+            else
+            {
+                ResetGorevInisHizi();
+            }
+
+            if (IsDataMissing(basinc2))
+            {
+                CheckTasiyiciBasinc();
+            }
+            else
+            {
+                ResetTasiyiciBasinc();
+            }
+
+            if (IsDataMissing(gps1Enlem, gps1Boylam, gps1Yukseklik))
+            {
+                CheckGorevGps();
+            }
+            else
+            {
+                ResetGorevGps();
+            }
+
+            hataKoduDegeri = HataKoduHesapla();
+            HataKoduDegerText.Text = hataKoduDegeri;
+        }
+
+
 
         private void UpdateChart(Chart chart, double time, double value)
         {
@@ -386,31 +506,78 @@ namespace Demo
         {
             try
             {
-                readingPort = new SerialPort(serialPortBox.Text, Convert.ToInt32(boundRateBox.Text));
+                if (readingPort != null && readingPort.IsOpen)
+                {
+                    MessageBox.Show("Seri port zaten açık.");
+                    return;
+                }
+
+                // Seri portu yapılandır
+                readingPort = new SerialPort(serialPortBox.Text, Convert.ToInt32(boundRateBox.Text))
+                {
+                    ReadTimeout = 3000,   // Okuma zaman aşımı (3 saniye)
+                    WriteTimeout = 1000,  // Yazma zaman aşımı (1 saniye)
+                    DtrEnable = true,     // Veri terminal ready (DTR) etkinleştir
+                    RtsEnable = true      // Request to send (RTS) etkinleştir
+                };
+
+                // Veri alım işleyicisini ekle
                 readingPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-                if (!readingPort.IsOpen)
+                // Seri port bağlantısını ve veri alım işlemlerini arka plana taşı
+                Task.Run(() =>
                 {
-                    timer1.Start();
-                    readingPort.Open();
-                    durdurButton.Enabled = true;
-                    baglanButton.Enabled = false;
-                }
+                    try
+                    {
+                        readingPort.Open();
+                        Invoke((MethodInvoker)(() =>
+                        {
+                            durdurButton.Enabled = true;
+                            baglanButton.Enabled = false;
+                        }));
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        Invoke((MethodInvoker)(() => MessageBox.Show($"Erişim reddedildi: {ex.Message}")));
+                    }
+                    catch (IOException ex)
+                    {
+                        Invoke((MethodInvoker)(() => MessageBox.Show($"G/Ç hatası: {ex.Message}")));
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Invoke((MethodInvoker)(() => MessageBox.Show($"Geçersiz işlem: {ex.Message}")));
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke((MethodInvoker)(() => MessageBox.Show($"Bağlantı kurulamadı: {ex.Message}")));
+                    }
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("BAĞLANTI KURULAMADI");
+                MessageBox.Show($"Bağlantı kurulamadı: {ex.Message}");
                 durdurButton.Enabled = true;
             }
         }
 
         private void DurdurButton_Click(object sender, EventArgs e)
         {
-            readingPort.Close();
-            timer1.Stop();
-            baglanButton.Enabled = true;
-            durdurButton.Enabled = false;
-            MessageBox.Show("BAĞLANTI KESİLDİ");
+            try
+            {
+                if (readingPort.IsOpen)
+                {
+                    readingPort.Close();
+                    timer1.Stop();
+                    baglanButton.Enabled = true;
+                    durdurButton.Enabled = false;
+                    MessageBox.Show("BAĞLANTI KESİLDİ");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Bağlantı kesme hatası: {ex.Message}");
+            }
         }
 
         // Fonksiyonlar
@@ -704,7 +871,7 @@ namespace Demo
         {
             try
             {
-                string jsonData = readingPort.ReadLine();
+                string jsonData = readingPort.ReadExisting();
                 JObject telemetryData = JObject.Parse(jsonData);
 
                 x = telemetryData["pitch"].ToObject<float>();
