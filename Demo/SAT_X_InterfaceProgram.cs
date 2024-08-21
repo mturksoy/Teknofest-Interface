@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.IO;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+using AForge.Video;
+using AForge.Video.DirectShow;
 
 namespace Demo
 {
@@ -22,6 +23,8 @@ namespace Demo
         private const double timeStep = 1;  // Zaman adımı (her veri geldiğinde artar)
         private string hataKoduDegeri = "00000";
         private StreamWriter telemetryWriter;
+        private FilterInfoCollection videoDevices;
+        private VideoCaptureDevice videoSource;
         Timer timer1;
 
         public SATX()
@@ -127,13 +130,16 @@ namespace Demo
 
                 // Dosya yoksa başlıkları yazacak şekilde dosya oluşturuyoruz
                 bool fileExists = File.Exists(path);
-                telemetryWriter = new StreamWriter(path, true); // Dosya yoksa oluşturur, varsa üzerine yazar.
 
-                if (!fileExists)
+                using (telemetryWriter = new StreamWriter(path, true)) // Dosya yoksa oluşturur, varsa üzerine yazar.
                 {
-                    // Dosya yoksa başlık satırlarını yazıyoruz
-                    telemetryWriter.WriteLine("PAKET NUMARASI,UYDU STATÜSÜ,HATA KODU,GÖNDERME SAATİ,BASINÇ1,BASINÇ2,YÜKSEKLİK1,YÜKSEKLİK2,İRTİFA FARKI,İNİŞ HIZI,SICAKLIK,PİL GERİLİMİ,GPS1 LATITUDE,GPS1 LONGITUDE,GPS1 ALTITUDE,PITCH,ROLL,YAW,RHRH,IoT DATA,TAKIM NO");
-                    telemetryWriter.WriteLine(",,,(HH:MM:SS),Pa,Pa,(m),(m),(m),(m/s),(°C),(V),(°),(°),(m),(°),(°),(°),,(IoT),");
+                    if (!fileExists)
+                    {
+                        // Dosya yoksa başlık satırlarını yazıyoruz
+                        telemetryWriter.WriteLine("PAKET NUMARASI,UYDU STATÜSÜ,HATA KODU,GÖNDERME SAATİ,BASINÇ1,BASINÇ2,YÜKSEKLİK1,YÜKSEKLİK2," +
+                            "İRTİFA FARKI,İNİŞ HIZI,SICAKLIK,PİL GERİLİMİ,GPS1 LATITUDE,GPS1 LONGITUDE,GPS1 ALTITUDE,PITCH,ROLL,YAW,RHRH,IoT DATA,TAKIM NO");
+                        telemetryWriter.WriteLine(",,,(DD:MM:YY - HH:MM:SS),hPa,hPa,(m),(m),(m),(m/s),(°C),(V),(°),(°),(m),(°),(°),(°),,(IoT),");
+                    }
                 }
             }
             catch (Exception ex)
@@ -142,17 +148,45 @@ namespace Demo
             }
         }
 
-        private void SaveTelemetryData(JObject telemetryData, string hataDegeri)
+        private void SaveTelemetryData(ulong paketNumarasi, int uyduStatusu, string hataDegeri, string gondermeSaati, float basinc1, float basinc2,
+                                        float yukseklik1, float yukseklik2, float irtifaFarki, float inisHizi, float sicaklik,
+                                        float pilGerilimi, double gps1Enlem, double gps1Boylam, float gps1Yukseklik, float pitch,
+                                        float roll, float yaw, int rhrh, int iotData, int takimNo)
         {
             try
             {
-                string csvLine = $"{telemetryData["paketNumarasi"]},{telemetryData["uyduStatusu"]},{hataDegeri},{telemetryData["gondermeSaati"]},{telemetryData["basinc1"]},{telemetryData["basinc2"]},{telemetryData["yukseklik1"]},{telemetryData["yukseklik2"]},{telemetryData["irtifaFarki"]},{telemetryData["inisHizi"]},{telemetryData["sicaklik"]},{telemetryData["pilGerilimi"]},{telemetryData["gps1Enlem"]},{telemetryData["gps1Boylam"]},{telemetryData["gps1Yukseklik"]},{telemetryData["pitch"]},{telemetryData["roll"]},{telemetryData["yaw"]},{telemetryData["rhrh"]},{telemetryData["iotData"]},{telemetryData["takimNo"]}";
-                telemetryWriter.WriteLine(csvLine);
+                // Dosya yolu tanımı
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "telemetry_data.csv");
+
+                // telemetryWriter nesnesi zaten tanımlı olduğundan, burada her yazma işleminde açıp kapatıyoruz.
+                using (telemetryWriter = new StreamWriter(path, true))
+                {
+                    string csvLine = $"{paketNumarasi},{uyduStatusu},\"{hataDegeri}\",\"{EscapeCsvValue(gondermeSaati)}\"," +
+                                     $"{EscapeCsvValue(basinc1.ToString())},{EscapeCsvValue(basinc2.ToString())},{EscapeCsvValue(yukseklik1.ToString())}," +
+                                     $"{EscapeCsvValue(yukseklik2.ToString())},{EscapeCsvValue(irtifaFarki.ToString())},{EscapeCsvValue(inisHizi.ToString())}," +
+                                     $"{EscapeCsvValue(sicaklik.ToString())},{EscapeCsvValue(pilGerilimi.ToString())},{EscapeCsvValue(gps1Enlem.ToString())}," +
+                                     $"{EscapeCsvValue(gps1Boylam.ToString())},{EscapeCsvValue(gps1Yukseklik.ToString())},{EscapeCsvValue(pitch.ToString())}," +
+                                     $"{EscapeCsvValue(roll.ToString())},{EscapeCsvValue(yaw.ToString())},{rhrh},{iotData},{takimNo}";
+
+                    telemetryWriter.WriteLine(csvLine);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Veri kaydetme hatası: {ex.Message}");
             }
+        }
+
+        private string EscapeCsvValue(string value)
+        {
+            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+            {
+                // Tırnak işareti içinde tırnak işareti bulunan metinleri iki tırnakla kaçır
+                value = value.Replace("\"", "\"\"");
+                // Değeri tırnak işaretleri içine al
+                return $"\"{value}\"";
+            }
+            return value;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -211,254 +245,185 @@ namespace Demo
                 Size = new Size(250, 875)
             };
             this.Controls.Add(panelGriArkaPlan4);
+
+            videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+
+            // USB2.0 PC CAMERA ismini taşıyan cihazı seçelim
+            foreach (FilterInfo device in videoDevices)
+            {
+                if (device.Name.Contains("USB2.0 PC CAMERA"))
+                {
+                    videoSource = new VideoCaptureDevice(device.MonikerString);
+                    break;
+                }
+            }
+
+            // Eğer USB kamera bulunduysa video akışını başlat
+            if (videoSource != null)
+            {
+                videoSource.NewFrame += new NewFrameEventHandler(VideoSource_NewFrame);
+                videoSource.Start();
+            }
+            else
+            {
+                MessageBox.Show("USB kamera bulunamadı.");
+            }
+        }
+
+        private void VideoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
+        {
+            // Gelen video karesini PictureBox'ta göstermek için
+            pictureBox1.Image = (Bitmap)eventArgs.Frame.Clone();
         }
 
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             try
             {
-                // Veri alımını bir arka plan iş parçacığına taşı
-                Task.Run(async () =>
+                string jsonData = readingPort.ReadLine().Trim(); // Gelen veriyi okuyun ve baştaki/sondaki boşlukları silin
+
+                // Verinin geçerli bir JSON olup olmadığını kontrol edin
+                if (jsonData.StartsWith("{") && jsonData.EndsWith("}"))
                 {
-                    JObject telemetryData = await ReadAndParseDataAsync();
 
-                    if (telemetryData != null)
+                    JObject telemetryData = JObject.Parse(jsonData);
+
+                    ulong paketNumarasi = telemetryData["paketNumarasi"].ToObject<ulong>();
+                    int uyduStatusu = telemetryData["uyduStatusu"].ToObject<int>();
+                    // Tarih ve saat formatı
+                    string gondermeSaati = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                    float basinc1 = telemetryData["basinc1"].ToObject<float>();
+                    float basinc2 = telemetryData["basinc2"].ToObject<float>();
+                    float yukseklik1 = telemetryData["yukseklik1"].ToObject<float>();
+                    float yukseklik2 = telemetryData["yukseklik2"].ToObject<float>();
+                    float irtifaFarki = telemetryData["irtifaFarki"].ToObject<float>();
+                    float inisHizi = telemetryData["inisHizi"].ToObject<float>();
+                    float sicaklik = telemetryData["sicaklik"].ToObject<float>();
+                    float pilGerilimi = telemetryData["pilGerilimi"].ToObject<float>();
+                    double gps1Enlem = telemetryData["gps1Enlem"].ToObject<double>();
+                    double gps1Boylam = telemetryData["gps1Boylam"].ToObject<double>();
+                    float gps1Yukseklik = telemetryData["gps1Yukseklik"].ToObject<float>();
+                    float pitch = telemetryData["pitch"].ToObject<float>();
+                    float roll = telemetryData["roll"].ToObject<float>();
+                    float yaw = telemetryData["yaw"].ToObject<float>();
+                    int rhrh = telemetryData["rhrh"].ToObject<int>();
+                    int iotData = telemetryData["iotData"].ToObject<int>();
+
+
+                    this.gpsEnlem = gps1Enlem;
+                    this.gpsBoylam = gps1Boylam;
+
+                    // UI thread'de UpdateMap fonksiyonunu çalıştırma
+                    this.Invoke((MethodInvoker)delegate
                     {
-                        UpdateTelemetryData(telemetryData);
-                        CheckAndHandleErrors(
-                            telemetryData["uyduStatusu"].ToObject<int>(),
-                            telemetryData["inisHizi"].ToObject<float>(),
-                            telemetryData["basinc2"].ToObject<float>(),
-                            telemetryData["gps1Enlem"].ToObject<double>(),
-                            telemetryData["gps1Boylam"].ToObject<double>(),
-                            telemetryData["gps1Yukseklik"].ToObject<float>()
-                        );
-                        SaveTelemetryData(telemetryData, hataKoduDegeri);
-                        uyduGlControl.Invalidate();
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Veri işleme hatası: {ex.Message}");
-            }
-        }
-
-
-        private async Task<JObject> ReadAndParseDataAsync()
-        {
-            try
-            {
-                if (readingPort.BytesToRead > 0)
-                {
-                    string jsonData = await Task.Run(() =>
-                    {
-                        try
-                        {
-                            // Gelen veriyi oku
-                            string rawData = readingPort.ReadLine();
-
-                            // Geçersiz karakterleri temizleme (örneğin, null karakterler)
-                            rawData = rawData.Replace("\0", "").Trim();
-
-                            // Veri kontrolü
-                            if (string.IsNullOrEmpty(rawData))
-                            {
-                                Console.WriteLine("Boş veri alındı.");
-                                return null;
-                            }
-
-                            Console.WriteLine($"Alınan veri: {rawData}");
-
-                            // JSON formatında değilse geçersiz JSON olarak kabul et
-                            if (rawData.StartsWith("{") && rawData.EndsWith("}"))
-                            {
-                                return rawData;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Geçersiz JSON formatı");
-                                return null;
-                            }
-                        }
-                        catch (ArgumentOutOfRangeException ex)
-                        {
-                            Console.WriteLine($"Veri okuma hatası: Negatif olmayan bir sayı gerekiyor. Detay: {ex.Message}");
-                            return null;
-                        }
-                        catch (OverflowException ex)
-                        {
-                            Console.WriteLine($"Veri okuma hatası: Aritmetik işlem taşmayla sonuçlandı. Detay: {ex.Message}");
-                            return null;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Genel veri okuma hatası: {ex.Message}");
-                            return null;
-                        }
+                        UpdateMap();
                     });
 
-                    if (!string.IsNullOrEmpty(jsonData))
+                    this.Invoke((MethodInvoker)delegate
                     {
-                        // JSON verisini parse et
-                        return JObject.Parse(jsonData);
+                        UpdateChart(gyBasincChart, elapsedTime, basinc1);
+                        UpdateChart(tBasincChart, elapsedTime, basinc2);
+                        UpdateChart(gyYukseklikChart, elapsedTime, yukseklik1);
+                        UpdateChart(tYukseklikChart, elapsedTime, yukseklik2);
+                        UpdateChart(irtifaFarkiChart, elapsedTime, irtifaFarki);
+                        UpdateChart(inisHiziChart, elapsedTime, inisHizi);
+                        UpdateChart(sicaklikChart, elapsedTime, sicaklik);
+                        UpdateChart(pilGerilimiChart, elapsedTime, pilGerilimi);
+
+                        UpdateChartTimeRange(gyBasincChart);
+                        UpdateChartTimeRange(tBasincChart);
+                        UpdateChartTimeRange(gyYukseklikChart);
+                        UpdateChartTimeRange(tYukseklikChart);
+                        UpdateChartTimeRange(irtifaFarkiChart);
+                        UpdateChartTimeRange(inisHiziChart);
+                        UpdateChartTimeRange(sicaklikChart);
+                        UpdateChartTimeRange(pilGerilimiChart);
+                    });
+
+                    elapsedTime += timeStep;
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        paketNumarasiText.Text = paketNumarasi.ToString();
+                        uyduStatusuText.Text = uyduStatusu.ToString();
+                        gondermeSaatiText.Text = gondermeSaati;
+                        gyBasincText.Text = basinc1.ToString();
+                        tasiyiciBasincText.Text = basinc2.ToString();
+                        gyYukseklikText.Text = yukseklik1.ToString();
+                        tasiyiciYukseklikText.Text = yukseklik2.ToString();
+                        irtifaFarkiText.Text = irtifaFarki.ToString();
+                        inisHiziText.Text = inisHizi.ToString();
+                        sicaklikText.Text = sicaklik.ToString();
+                        pilGerilimiText.Text = pilGerilimi.ToString();
+                        latitudeText.Text = gps1Enlem.ToString();
+                        longitudeText.Text = gps1Boylam.ToString();
+                        altitudeText.Text = gps1Yukseklik.ToString();
+                        pitchText.Text = pitch.ToString();
+                        rollText.Text = roll.ToString();
+                        yawText.Text = yaw.ToString();
+                        rhrhText.Text = rhrh.ToString();
+                        iotText.Text = iotData.ToString();
+                    });
+
+                    if ((inisHizi < 12 || inisHizi > 14) && uyduStatusu == 2)
+                    {
+                        CheckModelInisHizi();
                     }
                     else
                     {
-                        Console.WriteLine("Boş veya geçersiz veri alındı.");
-                        return null;
+                        ResetModelInisHizi();
                     }
+
+                    if ((inisHizi < 6 || inisHizi > 8) && uyduStatusu == 4)
+                    {
+                        CheckGorevInisHizi();
+                    }
+                    else
+                    {
+                        ResetGorevInisHizi();
+                    }
+
+                    if (IsDataMissing(basinc2))
+                    {
+                        CheckTasiyiciBasinc();
+                    }
+                    else
+                    {
+                        ResetTasiyiciBasinc();
+                    }
+
+                    if (IsDataMissing(gps1Enlem, gps1Boylam, gps1Yukseklik))
+                    {
+                        CheckGorevGps();
+                    }
+                    else
+                    {
+                        ResetGorevGps();
+                    }
+
+                    hataKoduDegeri = HataKoduHesapla();
+                    HataKoduDegerText.Text = hataKoduDegeri;
+
+                    SaveTelemetryData(paketNumarasi, uyduStatusu, hataKoduDegeri, gondermeSaati, basinc1, basinc2, 
+                        yukseklik1, yukseklik2, irtifaFarki, inisHizi, sicaklik, pilGerilimi, gps1Enlem, gps1Boylam, 
+                        gps1Yukseklik, pitch, roll, yaw, rhrh, iotData,527035);
+
+                    this.x = pitch;
+                    this.y = roll;
+                    this.z = yaw;
+                    uyduGlControl.Invalidate();
                 }
                 else
                 {
-                    Console.WriteLine("Seri portta veri bulunmuyor.");
-                    return null;
+                    // JSON formatında değilse, hata mesajı verin
+                    Console.WriteLine("Geçersiz JSON verisi alındı: " + jsonData);
                 }
             }
             catch (Exception ex)
             {
-                Invoke((MethodInvoker)delegate
-                {
-                    MessageBox.Show($"Veri okuma hatası: {ex.Message}");
-                });
-                return null;
+                MessageBox.Show($"Veri okuma hatası: {ex.Message}");
             }
         }
-
-
-
-        private void UpdateTelemetryData(JObject telemetryData)
-        {
-            try
-            {
-                ulong paketNumarasi = telemetryData["paketNumarasi"].ToObject<ulong>();
-                int uyduStatusu = telemetryData["uyduStatusu"].ToObject<int>();
-                string gondermeSaati = telemetryData["gondermeSaati"].ToString();
-                float basinc1 = telemetryData["basinc1"].ToObject<float>();
-                float basinc2 = telemetryData["basinc2"].ToObject<float>();
-                float yukseklik1 = telemetryData["yukseklik1"].ToObject<float>();
-                float yukseklik2 = telemetryData["yukseklik2"].ToObject<float>();
-                float irtifaFarki = telemetryData["irtifaFarki"].ToObject<float>();
-                float inisHizi = telemetryData["inisHizi"].ToObject<float>();
-                float sicaklik = telemetryData["sicaklik"].ToObject<float>();
-                float pilGerilimi = telemetryData["pilGerilimi"].ToObject<float>();
-                double gps1Enlem = telemetryData["gps1Enlem"].ToObject<double>();
-                double gps1Boylam = telemetryData["gps1Boylam"].ToObject<double>();
-                float gps1Yukseklik = telemetryData["gps1Yukseklik"].ToObject<float>();
-                float pitch = telemetryData["pitch"].ToObject<float>();
-                float roll = telemetryData["roll"].ToObject<float>();
-                float yaw = telemetryData["yaw"].ToObject<float>();
-                int rhrh = telemetryData["rhrh"].ToObject<int>();
-                int iotData = telemetryData["iotData"].ToObject<int>();
-
-                elapsedTime += timeStep;
-
-                this.gpsEnlem = gps1Enlem;
-                this.gpsBoylam = gps1Boylam;
-                this.x = pitch;
-                this.y = roll;
-                this.z = yaw;
-
-                UpdateUI(paketNumarasi, uyduStatusu, gondermeSaati, basinc1, basinc2, yukseklik1, yukseklik2, irtifaFarki, inisHizi, sicaklik, pilGerilimi, gps1Enlem, gps1Boylam, gps1Yukseklik, pitch, roll, yaw, rhrh, iotData);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Telemetri verilerini güncelleme hatası: {ex.Message}");
-            }
-        }
-
-        private void UpdateUI(ulong paketNumarasi, int uyduStatusu, string gondermeSaati, float basinc1, float basinc2, float yukseklik1, float yukseklik2, float irtifaFarki, float inisHizi, float sicaklik, float pilGerilimi, double gps1Enlem, double gps1Boylam, float gps1Yukseklik, float pitch, float roll, float yaw, int rhrh, int iotData)
-        {
-            this.Invoke((MethodInvoker)delegate {
-                paketNumarasiText.Text = paketNumarasi.ToString();
-                uyduStatusuText.Text = uyduStatusu.ToString();
-                gondermeSaatiText.Text = gondermeSaati;
-                gyBasincText.Text = basinc1.ToString();
-                tasiyiciBasincText.Text = basinc2.ToString();
-                gyYukseklikText.Text = yukseklik1.ToString();
-                tasiyiciYukseklikText.Text = yukseklik2.ToString();
-                irtifaFarkiText.Text = irtifaFarki.ToString();
-                inisHiziText.Text = inisHizi.ToString();
-                sicaklikText.Text = sicaklik.ToString();
-                pilGerilimiText.Text = pilGerilimi.ToString();
-                latitudeText.Text = gps1Enlem.ToString();
-                longitudeText.Text = gps1Boylam.ToString();
-                altitudeText.Text = gps1Yukseklik.ToString();
-                pitchText.Text = pitch.ToString();
-                rollText.Text = roll.ToString();
-                yawText.Text = yaw.ToString();
-                rhrhText.Text = rhrh.ToString();
-                iotText.Text = iotData.ToString();
-
-                UpdateMap();
-                UpdateCharts(basinc1, basinc2, yukseklik1, yukseklik2, irtifaFarki, inisHizi, sicaklik, pilGerilimi);
-            });
-        }
-
-        private void UpdateCharts(float basinc1, float basinc2, float yukseklik1, float yukseklik2, float irtifaFarki, float inisHizi, float sicaklik, float pilGerilimi)
-        {
-            UpdateChart(gyBasincChart, elapsedTime, basinc1);
-            UpdateChart(tBasincChart, elapsedTime, basinc2);
-            UpdateChart(gyYukseklikChart, elapsedTime, yukseklik1);
-            UpdateChart(tYukseklikChart, elapsedTime, yukseklik2);
-            UpdateChart(irtifaFarkiChart, elapsedTime, irtifaFarki);
-            UpdateChart(inisHiziChart, elapsedTime, inisHizi);
-            UpdateChart(sicaklikChart, elapsedTime, sicaklik);
-            UpdateChart(pilGerilimiChart, elapsedTime, pilGerilimi);
-
-            UpdateChartTimeRange(gyBasincChart);
-            UpdateChartTimeRange(tBasincChart);
-            UpdateChartTimeRange(gyYukseklikChart);
-            UpdateChartTimeRange(tYukseklikChart);
-            UpdateChartTimeRange(irtifaFarkiChart);
-            UpdateChartTimeRange(inisHiziChart);
-            UpdateChartTimeRange(sicaklikChart);
-            UpdateChartTimeRange(pilGerilimiChart);
-        }
-
-        private void CheckAndHandleErrors(int uyduStatusu, float inisHizi, float basinc2, double gps1Enlem, double gps1Boylam, float gps1Yukseklik)
-        {
-            if ((inisHizi < 12 || inisHizi > 14) && uyduStatusu == 2)
-            {
-                CheckModelInisHizi();
-            }
-            else
-            {
-                ResetModelInisHizi();
-            }
-
-            if ((inisHizi < 6 || inisHizi > 8) && uyduStatusu == 4)
-            {
-                CheckGorevInisHizi();
-            }
-            else
-            {
-                ResetGorevInisHizi();
-            }
-
-            if (IsDataMissing(basinc2))
-            {
-                CheckTasiyiciBasinc();
-            }
-            else
-            {
-                ResetTasiyiciBasinc();
-            }
-
-            if (IsDataMissing(gps1Enlem, gps1Boylam, gps1Yukseklik))
-            {
-                CheckGorevGps();
-            }
-            else
-            {
-                ResetGorevGps();
-            }
-
-            hataKoduDegeri = HataKoduHesapla();
-            HataKoduDegerText.Text = hataKoduDegeri;
-        }
-
-
 
         private void UpdateChart(Chart chart, double time, double value)
         {
@@ -865,22 +830,38 @@ namespace Demo
         {
             telemetryWriter?.Close(); // Dosya kapanışını unutmuyoruz
             telemetryWriter?.Dispose(); // sonradan eklendi
+
+            if (videoSource != null && videoSource.IsRunning)
+            {
+                videoSource.SignalToStop();
+                videoSource.WaitForStop();
+            }
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
             try
             {
-                string jsonData = readingPort.ReadExisting();
-                JObject telemetryData = JObject.Parse(jsonData);
+                string jsonData = readingPort.ReadLine().Trim(); // Gelen veriyi okuyun ve baştaki/sondaki boşlukları silin
 
-                x = telemetryData["pitch"].ToObject<float>();
-                y = telemetryData["roll"].ToObject<float>();
-                z = telemetryData["yaw"].ToObject<float>();
+                // Verinin geçerli bir JSON olup olmadığını kontrol edin
+                if (jsonData.StartsWith("{") && jsonData.EndsWith("}"))
+                {
+                    JObject telemetryData = JObject.Parse(jsonData);
 
-                uyduGlControl.Invalidate();
+                    x = telemetryData["pitch"].ToObject<float>();
+                    y = telemetryData["roll"].ToObject<float>();
+                    z = telemetryData["yaw"].ToObject<float>();
 
-                readingPort.DiscardInBuffer();
+                    uyduGlControl.Invalidate();
+
+                    readingPort.DiscardInBuffer();
+                }
+                else
+                {
+                    // JSON formatında değilse, hata mesajı verin
+                    Console.WriteLine("Geçersiz JSON verisi alındı: " + jsonData);
+                }
             }
             catch (Exception ex)
             {

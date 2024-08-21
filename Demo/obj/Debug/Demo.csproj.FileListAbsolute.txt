@@ -26,3 +26,9 @@ C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
 C:\Dev\teknofest\Demo\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
 C:\Dev\teknofest\Demo\bin\Debug\Newtonsoft.Json.dll
 C:\Dev\teknofest\Demo\bin\Debug\Newtonsoft.Json.xml
+C:\Dev\teknofest\Demo\bin\Debug\AForge.dll
+C:\Dev\teknofest\Demo\bin\Debug\AForge.Video.DirectShow.dll
+C:\Dev\teknofest\Demo\bin\Debug\AForge.Video.dll
+C:\Dev\teknofest\Demo\bin\Debug\AForge.xml
+C:\Dev\teknofest\Demo\bin\Debug\AForge.Video.xml
+C:\Dev\teknofest\Demo\bin\Debug\AForge.Video.DirectShow.xml
